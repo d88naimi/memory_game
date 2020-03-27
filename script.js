@@ -1,77 +1,107 @@
-let gameHome =document.querySelector('.game-home');
+let gameHome = document.querySelector(".game-home");
 let firstBox;
 let secondBox;
-let preventSelected = false
+let preventSelected = false;
+let findImage;
 
 let images = ["corvette", "ferrari", "lambo", "mb"];
 
-// init game 
+// init game
 init();
 
-function init(){
-    render();
-    handler();
+function init() {
+  render();
+  handler();
 }
 //shuffle array images function
 
 //   console.log(shuffle);
-  function randomItemFromArray(arr, not) {
-    const item = arr[Math.floor(Math.random() * arr.length)];
-    if (item === not) {
-      console.log("Ahh we used that one last time, look again");
-      return randomItemFromArray(arr, not);
-    }
-    return item;
+function randomItemFromArray(arr, not) {
+  const item = arr[Math.floor(Math.random() * arr.length)];
+  if (item === not) {
+    console.log("Ahh we used that one last time, look again");
+    return randomItemFromArray(arr, not);
   }
-console.log(randomItemFromArray(images));
-//render function 
+  return item;
+}
+// console.log(randomItemFromArray(images));
+//render function
 
-function render(){
-// loop through images 
-// place images into container
-images.forEach(i => {
-var html = `
+function render() {
+  // loop through images
+  // place images into container
+  images.forEach(i => {
+    var html = `
     <div class="cell small-3 box">
-        <button data-car=${i} class="butBox"><img src="./images/${i}.jpg" alt="car"></button></div>
+        <button  class="butBox"><img data-car=${i} src="./images/${i}.jpg" alt="car"></button></div>
     </div>
     <div class="cell small-3 box">
-        <button data-car=${i} class="butBox"><img src="./images/${i}.jpg" alt="car"></button></div>
+        <button class="butBox"><img  data-car=${i} src="./images/${i}.jpg" alt="car"></button></div>
     </div>
     
-`;    
-// append images to container
-gameHome.insertAdjacentHTML("afterbegin", html);
-});
+`;
+    // append images to container
+    gameHome.insertAdjacentHTML("afterbegin", html);
+  });
 }
-
 
 // handler function
 // check if anything is selected else assign clicked img to firstSelection
-// if preventSelected is true 
+// if preventSelected is true
 // assign next img selected to secondSelection
 // if firstSelection is and secondSelection is true
-// check if firstSelection === secondSelection 
-// leave show class on 
-// else remove show class 
-function handler(){
+// check if firstSelection === secondSelection
+// leave show class on
+// else remove show class
+function handler() {
   $(document).on("click", function(event) {
-    const checkIfSelected = event.target.closest(".butBox");
-    preventSelected = true;
-    if (preventSelected) {
-      firstBox = checkIfSelected.getAttribute("data-car");
-      console.log(firstBox);
-    } else {
-      console.log('no');
+    const selected = event.target.closest("img");
+    console.log( selected);
+    if (selected === undefined || preventSelected) {
+      return;
     }
-    
+    if (firstBox === undefined) {
+      firstBox = selected;
+      showBox(selected);
+      return;
+    }
 
-    // $("img").toggleClass("show");
-
+    if (secondBox === undefined) {
+      preventSelected = true;
+      secondBox = selected;
+      showBox(selected);
+      checker();
+    }
   });
-} 
-// if correct leave facing up 
-//else flip the cards back over timer may be needed 
+}
 
-// function reset game 
+function showBox(box){
+  box.classList.add("show");
+}
+function hideBox(box){
+  box.classList.remove("show");
+}
 
+function checker() {
+  if (
+    firstBox.getAttribute("data-car") === secondBox.getAttribute("data-car")
+  ) {
+    console.log("correct");
+  } else {
+    setTimeout(() => {
+      reset();
+    }, 2000);
+  }
+}
 
+function reset() {
+  hideBox(firstBox);
+  hideBox(secondBox);
+  firstSelection = undefined;
+  secondSelection = undefined;
+  preventSelection = false;
+}
+// if correct leave facing up
+//else flip the cards back over timer may be needed
+
+// function reset game
