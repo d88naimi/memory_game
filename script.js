@@ -1,8 +1,10 @@
 let gameHome = document.querySelector(".game-home");
+
 let firstBox;
 let secondBox;
 let preventSelected = false;
 let findImage;
+let solved = 0;
 
 let images = ["corvette", "ferrari", "lambo", "mb"];
 
@@ -11,7 +13,6 @@ init();
 
 function init() {
   render();
-  handler();
 }
 //shuffle array images function
 
@@ -45,6 +46,28 @@ function render() {
   });
 }
 
+document.addEventListener("click", handler);
+
+function handler(event) {
+  const selected = event.target;
+  console.log(selected);
+  if (selected === undefined || preventSelected) {
+    return;
+  }
+  if (firstBox === undefined) {
+    firstBox = selected;
+    showBox(firstBox);
+    return;
+  }
+
+  if (secondBox === undefined) {
+    preventSelected = true;
+    secondBox = selected;
+    showBox(secondBox);
+    checker();
+  }
+}
+
 // handler function
 // check if anything is selected else assign clicked img to firstSelection
 // if preventSelected is true
@@ -53,52 +76,38 @@ function render() {
 // check if firstSelection === secondSelection
 // leave show class on
 // else remove show class
-function handler() {
-  $(document).on("click", function(event) {
-    const selected = event.target.closest("img");
-    console.log( selected);
-    if (selected === undefined || preventSelected) {
-      return;
-    }
-    if (firstBox === undefined) {
-      firstBox = selected;
-      showBox(selected);
-      return;
-    }
 
-    if (secondBox === undefined) {
-      preventSelected = true;
-      secondBox = selected;
-      showBox(selected);
-      checker();
-    }
-  });
-}
-
-function showBox(box){
+function showBox(box) {
   box.classList.add("show");
 }
-function hideBox(box){
+function hideBox(box) {
   box.classList.remove("show");
 }
 
 function checker() {
   if (
-    firstBox.getAttribute("data-car") === secondBox.getAttribute("data-car")
+    firstBox.getAttribute("data-car") !== secondBox.getAttribute("data-car")
   ) {
-    console.log("correct");
-  } else {
     setTimeout(() => {
+      hideBox(firstBox);
+      hideBox(secondBox);
       reset();
     }, 2000);
+    return
+  } 
+  console.log(images.length);
+  solved += 2;
+  if(solved >= images.length * 2){
+    alert("Winner");
+    init();
+  } else {
+    reset();
   }
 }
 
 function reset() {
-  hideBox(firstBox);
-  hideBox(secondBox);
-  firstSelection = undefined;
-  secondSelection = undefined;
+  firstBox = undefined;
+  secondBox = undefined;
   preventSelection = false;
 }
 // if correct leave facing up
