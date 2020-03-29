@@ -1,34 +1,52 @@
 let gameHome = document.querySelector(".game-home");
-
 let firstBox;
 let secondBox;
 let preventSelected = false;
 let findImage;
 let solved = 0;
 
-let images = ["corvette", "ferrari", "lambo", "mb"];
+let images = [
+  "corvette",
+  "ferrari",
+  "lambo",
+  "mb",
+  "corvette",
+  "ferrari",
+  "lambo",
+  "mb"
+];
 
 // init game
 init();
 
 function init() {
-  render();
+  render(shuffle(images));
 }
 //shuffle array images function
 
-//   console.log(shuffle);
-function randomItemFromArray(arr, not) {
-  const item = arr[Math.floor(Math.random() * arr.length)];
-  if (item === not) {
-    console.log("Ahh we used that one last time, look again");
-    return randomItemFromArray(arr, not);
+//shuffle array times 2  and the loop through
+function shuffle(array) {
+  var currentIndex = array.length,
+    temporaryValue,
+    randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
   }
-  return item;
+
+  return array;
 }
-// console.log(randomItemFromArray(images));
 //render function
 
-function render() {
+function render(images) {
   // loop through images
   // place images into container
   images.forEach(i => {
@@ -36,10 +54,6 @@ function render() {
     <div class="cell small-3 box">
         <button  class="butBox"><img data-car=${i} src="./images/${i}.jpg" alt="car"></button></div>
     </div>
-    <div class="cell small-3 box">
-        <button class="butBox"><img  data-car=${i} src="./images/${i}.jpg" alt="car"></button></div>
-    </div>
-    
 `;
     // append images to container
     gameHome.insertAdjacentHTML("afterbegin", html);
@@ -50,8 +64,7 @@ document.addEventListener("click", handler);
 
 function handler(event) {
   const selected = event.target;
-  console.log(selected);
-  if (selected === undefined || preventSelected) {
+  if (!selected.matches("img") || preventSelected) {
     return;
   }
   if (firstBox === undefined) {
@@ -93,12 +106,13 @@ function checker() {
       hideBox(secondBox);
       reset();
     }, 2000);
-    return
-  } 
-  console.log(images.length);
+    return;
+  }
   solved += 2;
-  if(solved >= images.length * 2){
+  if (solved >= images.length) {
     alert("Winner");
+    reset();
+    gameHome.innerHTML = "";
     init();
   } else {
     reset();
@@ -108,7 +122,7 @@ function checker() {
 function reset() {
   firstBox = undefined;
   secondBox = undefined;
-  preventSelection = false;
+  preventSelected = false;
 }
 // if correct leave facing up
 //else flip the cards back over timer may be needed
