@@ -113,6 +113,7 @@ function checker() {
     alert("Winner");
     reset();
     gameHome.innerHTML = "";
+    solved = 0;
     init();
   } else {
     reset();
@@ -123,6 +124,7 @@ function reset() {
   firstBox = undefined;
   secondBox = undefined;
   preventSelected = false;
+  
 }
 // if correct leave facing up
 //else flip the cards back over timer may be needed
